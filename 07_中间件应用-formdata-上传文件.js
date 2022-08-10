@@ -1,15 +1,15 @@
 const path = require('path')
 
 const express = require('express')
-const multer = require('multer')
+const multer = require('multer')  // 上传文件插件
 
 const app = express()
 
-app.use(express.json())
+// app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // 文件操作
-const storage = multer.diskStorage({
+const storage = multer.diskStorage({  // 用这种方式不会自动生成文件夹，
   destination: (req, file, cb) => {
     cb(null, './uploads/')
   },
@@ -18,12 +18,13 @@ const storage = multer.diskStorage({
   }
 })
 const upload = multer({
-  // dest: './uploads/' // 直接使用文件不可定义文件名及后缀，直接自动生成
+  // dest: './uploads/' // 直接使用文件不可定义文件名及后缀，如果目录中没有uploads文件夹会直接自动生成uploads文件夹
   storage
 })
-// app.use(upload.any());
+// app.use(upload.any());  // 不能使用.any()作为全局中间件中使用
 
-app.post('/login', (req, res, next) => {
+app.post('/login', upload.any(), (req, res, next) => {
+  console.log(req.body)
   res.end('welcome back')
 })
 
