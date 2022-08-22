@@ -1,4 +1,3 @@
-const authService = require('../service/auth_service')
 const jwt = require('jsonwebtoken')
 
 const { PRIVATE_KEY } = require('../app/config')
@@ -19,7 +18,7 @@ class AuthController {
   };
 
   async success(ctx, next) {
-
+    ctx.body = '授权成功'
   }
 }
 

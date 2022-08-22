@@ -1,10 +1,14 @@
+const jwt = require('jsonwebtoken')
+
 const {
   NAME_OR_PASSWORD_IS_REQUIRED,
   USER_NOT_EXISTS,
-  PASSWORD_IS_INCORRECT
+  PASSWORD_IS_INCORRECT,
+  UNAUTHORIZATION
 } = require('../constants/error_types')
 const userService = require('../service/user_service')
 const md5password = require('../utils/password_handle')
+const { PUBLIC_KEY } = require('../app/config')
 
 const verifyLogin = async (ctx, next) => {
   // 获取用户名和密码
@@ -35,9 +39,31 @@ const verifyLogin = async (ctx, next) => {
   await next()
 }
 
-const verifyAuth = async() => {
-
-  await next()
+const verifyAuth = async(ctx, next) => {
+  // 验证授权
+  console.log("验证授权的middleware")
+  // 获取token
+  const authorization = ctx.headers.authorization;
+  if(!authorization) {
+    const error = new Error(UNAUTHORIZATION)
+    return ctx.app.emit('error', error, ctx)
+  }
+  const token = authorization.replace('Bearer ', '')
+  // 验证token
+  try {
+    const jwtResult = jwt.verify(token, PUBLIC_KEY, {
+      algorithms: ['RS256']
+    })
+    ctx.user = jwtResult
+    await next()
+  } catch (err) {
+    const error = new Error(UNAUTHORIZATION)
+    ctx.app.emit('error', error, ctx)
+  }
 }
 
-module.exports = { verifyLogin }
+const verifyPermission = async (ctx, next) => {
+
+}
+
+module.exports = { verifyLogin, verifyAuth, verifyPermission }
