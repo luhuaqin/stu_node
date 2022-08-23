@@ -13,7 +13,7 @@ class CommentController {
     const { commentId } = ctx.params
     const result = await commentService.deleteCommentById(commentId)
 
-    ctx.body = `删除成功`
+    ctx.body = `${commentId}删除成功`
   };
 
   async update(ctx, next) {
