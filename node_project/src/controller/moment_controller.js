@@ -32,11 +32,16 @@ class MomentController {
   async update(ctx, next) {
     const momentId = ctx.params.momentId
     const momentInfo = ctx.request.body
-    const { id } = ctx.user
+    const result = await momentService.updateMomentById(momentId, momentInfo)
 
-    // const result = await momentService.updateMomentById(momentId, momentInfo)
+    ctx.body = result
+  };
 
-    return result
+  async remove(ctx, next) {
+    const momentId = ctx.params.momentId
+    const result = await momentService.deleteMomentById(momentId)
+
+    ctx.body = `删除${momentId}成功`
   }
 }
 

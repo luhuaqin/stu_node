@@ -4,9 +4,11 @@ const {
   NAME_OR_PASSWORD_IS_REQUIRED,
   USER_NOT_EXISTS,
   PASSWORD_IS_INCORRECT,
-  UNAUTHORIZATION
+  UNAUTHORIZATION,
+  UNPERMISSION
 } = require('../constants/error_types')
 const userService = require('../service/user_service')
+const authService = require('../service/auth_service')
 const md5password = require('../utils/password_handle')
 const { PUBLIC_KEY } = require('../app/config')
 
@@ -63,7 +65,21 @@ const verifyAuth = async(ctx, next) => {
 }
 
 const verifyPermission = async (ctx, next) => {
+  // 获取信息
+  console.log("验证权限的middleware")
+  const { momentId } = ctx.params
+  const { id } = ctx.user
 
+  // 查询是否具备权限
+  try {
+    const isPermission = await authService.checkMoment(momentId, id)
+    if(!isPermission) throw new Error()
+    await next()
+  } catch (err) {
+    console.log(err)
+    const error = new Error(UNPERMISSION)
+    return ctx.app.emit('error', error, ctx)
+  }
 }
 
 module.exports = { verifyLogin, verifyAuth, verifyPermission }

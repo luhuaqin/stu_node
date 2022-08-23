@@ -45,7 +45,15 @@ class MomentService {
     const statement = `
       UPDATE moment SET title = ?, content = ? WHERE id = ?;
     `
-    const result = connection.execute(statement, [title, content, momentId ])
+    const result = await connection.execute(statement, [title, content, momentId ])
+
+    return result
+  }
+
+  // 删除动态
+  async deleteMomentById(momentId) {
+    const statement =  `DELETE FROM moment WHERE id = ?;`
+    const [result] = await connection.execute(statement, [ momentId ])
 
     return result
   }
