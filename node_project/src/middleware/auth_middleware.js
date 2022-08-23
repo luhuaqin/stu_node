@@ -64,15 +64,17 @@ const verifyAuth = async(ctx, next) => {
   }
 }
 
-const verifyPermission = async (ctx, next) => {
-  // 获取信息
+const verifyPermission =  async (ctx, next) => {
   console.log("验证权限的middleware")
-  const { momentId } = ctx.params
+  // 获取信息
+  const [resourceKey] = Object.keys(ctx.params)
+  const tableName = resourceKey.replace('Id', '')
+  const recordId = ctx.params[resourceKey]
   const { id } = ctx.user
 
   // 查询是否具备权限
   try {
-    const isPermission = await authService.checkMoment(momentId, id)
+    const isPermission = await authService.checkResource(tableName, recordId, id)
     if(!isPermission) throw new Error()
     await next()
   } catch (err) {
@@ -81,5 +83,25 @@ const verifyPermission = async (ctx, next) => {
     return ctx.app.emit('error', error, ctx)
   }
 }
+
+// const verifyPermission = (tableName) => {
+//   return async (ctx, next) => {
+//     // 获取信息
+//     console.log("验证权限的middleware")
+//     const { recordId } = ctx.params
+//     const { id } = ctx.user
+  
+//     // 查询是否具备权限
+//     try {
+//       const isPermission = await authService.checkMoment(tableName, recordId, id)
+//       if(!isPermission) throw new Error()
+//       await next()
+//     } catch (err) {
+//       console.log(err)
+//       const error = new Error(UNPERMISSION)
+//       return ctx.app.emit('error', error, ctx)
+//     }
+//   }
+// }
 
 module.exports = { verifyLogin, verifyAuth, verifyPermission }
