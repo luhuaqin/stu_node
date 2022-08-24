@@ -9,6 +9,20 @@ class LabelService {
     } catch (error) {
       console.log(error)
     }
+  };
+
+  async getLabelByName(name) {
+    const statement = `SELECT * FROM label WHERE name = ?;`
+    const [result] = await connction.execute(statement, [name])
+
+    return result[0]
+  };
+
+  async getLabelList(offset, size) {
+    const statement = `SELECT * FROM label LIMIT ?, ?;`
+    const [result] = await connction.execute(statement, [ offset, size ])
+
+    return result
   }
 }
 

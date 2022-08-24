@@ -42,6 +42,22 @@ class MomentController {
     const result = await momentService.deleteMomentById(momentId)
 
     ctx.body = `删除${momentId}成功`
+  };
+
+  async addLabels(ctx, next) {
+    const { labels } = ctx
+    const { momentId } = ctx.params
+
+    for (const label of labels) {
+      // 判断当前动态是否与label关联
+      const isExistsLabel = await momentService.hasLabel(momentId, label.id)
+      if(!isExistsLabel) {
+        // 添加label
+        await momentService.addLabel(momentId, label.id)
+      }
+    }
+    
+    ctx.body = "给动态添加标签成功"
   }
 }
 

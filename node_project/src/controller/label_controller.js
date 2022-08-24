@@ -11,6 +11,13 @@ class LabelController {
       console.log(error)
     }
   }
+
+  async list(ctx, next) {
+    const { offset, size } = ctx.query
+    const result = await labelService.getLabelList(offset, size)
+
+    ctx.body = result
+  }
 }
 
 module.exports = new LabelController()
