@@ -2,30 +2,30 @@ const commentService = require('../service/comment_service')
 
 class CommentController {
   async create(ctx, next) {
-    const { commentId, content } = ctx.request.body
+    const { momentId, content } = ctx.request.body  // 评论动态id和评论内容
     const { id } = ctx.user
-    const result = await commentService.createComment(commentId, content, id)
+    const result = await commentService.createComment(momentId, content, id)
 
     ctx.body = `成功发表评论`
   };
 
   async remove(ctx, next) {
-    const { commentId } = ctx.params
+    const { commentId } = ctx.params  // 评论id
     const result = await commentService.deleteCommentById(commentId)
 
     ctx.body = `${commentId}删除成功`
   };
 
   async update(ctx, next) {
-    const { commentId } = ctx.params
-    const { content } = ctx.request.body
+    const { commentId } = ctx.params  // 评论id
+    const { content } = ctx.request.body // 评论修改内容
     const result = await commentService.updateCommentById(commentId, content)
 
     ctx.body = result
   };
 
   async list(ctx, next) {
-    const { momentId } = ctx.query
+    const { momentId } = ctx.query  // 动态id
     const result = await commentService.getCommentList(momentId)
 
     ctx.body = result

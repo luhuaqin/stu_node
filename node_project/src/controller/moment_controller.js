@@ -4,7 +4,7 @@ class MomentController {
   async create(ctx, next) {
     // 获取数据（user_id、title、content）
     const userId = ctx.user.id
-    const momentInfo = ctx.request.body
+    const momentInfo = ctx.request.body  // 需要添加的动态信息
 
     const result = await momentService.create(userId, momentInfo)
 
@@ -22,7 +22,7 @@ class MomentController {
 
   async list(ctx, next) {
     // 获取offset、size
-    const { offset, size } = ctx.query
+    const { offset, size } = ctx.query  // 分页数据
     // 根据传入条件查询
     const result = await momentService.getMomentList(offset, size)
 
@@ -31,14 +31,14 @@ class MomentController {
 
   async update(ctx, next) {
     const momentId = ctx.params.momentId
-    const momentInfo = ctx.request.body
+    const momentInfo = ctx.request.body  // 动态id及动态信息
     const result = await momentService.updateMomentById(momentId, momentInfo)
 
     ctx.body = result
   };
 
   async remove(ctx, next) {
-    const momentId = ctx.params.momentId
+    const momentId = ctx.params.momentId  // 动态id
     const result = await momentService.deleteMomentById(momentId)
 
     ctx.body = `删除${momentId}成功`
