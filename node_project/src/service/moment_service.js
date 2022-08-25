@@ -21,9 +21,9 @@ class MomentService {
   async getMomentById(momentId) {
     const statement = `
       SELECT m.id id, m.title title, m.content content, m.createAt createTime, m.updateAt updateTime,
-        JSON_OBJECT('id', u.id, 'name', u.name) author,
+        JSON_OBJECT('id', u.id, 'name', u.name, 'avatarUrl', u.avatar_url) author,
         IF(COUNT(c.id), JSON_ARRAYAGG(JSON_OBJECT('id', c.id, 'content', c.content, 'commentId', c.comment_id, 'createTime', c.createAt, 
-            'user', JSON_OBJECT('id', cu.id, 'name', cu.name)
+            'user', JSON_OBJECT('id', cu.id, 'name', cu.name, 'avatarUrl', cu.avatar_url)
           )
         ), NULL) comments,
         (SELECT IF(COUNT(l.id), JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) FROM label l 
