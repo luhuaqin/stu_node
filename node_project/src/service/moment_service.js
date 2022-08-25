@@ -22,17 +22,18 @@ class MomentService {
     const statement = `
       SELECT m.id id, m.title title, m.content content, m.createAt createTime, m.updateAt updateTime,
         JSON_OBJECT('id', u.id, 'name', u.name) author,
-        JSON_ARRAYAGG(JSON_OBJECT('id', c.id, 'content', c.content, 'commentId', c.comment_id, 'createTime', c.createAt, 
+        IF(COUNT(c.id), JSON_ARRAYAGG(JSON_OBJECT('id', c.id, 'content', c.content, 'commentId', c.comment_id, 'createTime', c.createAt, 
             'user', JSON_OBJECT('id', cu.id, 'name', cu.name)
           )
-        ) comments,
-        JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)) labels
+        ), NULL) comments,
+        (SELECT IF(COUNT(l.id), JSON_ARRAYAGG(JSON_OBJECT('id', l.id, 'name', l.name)), NULL) FROM label l 
+            LEFT JOIN moment_label ml ON ml.label_id = l.id 
+            WHERE m.id = ml.moment_id
+        ) labels
       FROM moment m 
       LEFT JOIN user u ON m.user_id = u.id
       LEFT JOIN comment c ON c.comment_id = m.id OR c.moment_id = m.id
       LEFT JOIN user cu ON c.user_id = cu.id
-      LEFT JOIN moment_label ml ON m.id = ml.moment_id
-      LEFT JOIN label l ON ml.label_id = l.id
       WHERE m.id = ?;
     `
     const [result] = await connection.execute(statement, [ momentId ])

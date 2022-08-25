@@ -54,10 +54,10 @@ class MomentController {
       if(!isExistsLabel) {
         // 添加label
         await momentService.addLabel(momentId, label.id)
+        ctx.body = "给动态添加标签成功"
       }
+      ctx.body = "请不要重复添加标签"
     }
-    
-    ctx.body = "给动态添加标签成功"
   }
 }
 
