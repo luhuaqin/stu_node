@@ -1,4 +1,9 @@
 const momentService = require('../service/moment_service')
+const fileService = require('../service/file_service')
+const fs = require('fs')
+
+const { APP_HOST, MYSQL_HOST } = require('../app/config')
+const { PICTURE_PATH } =  require('../constants/file_path')
 
 class MomentController {
   async create(ctx, next) {
@@ -58,6 +63,16 @@ class MomentController {
       }
       ctx.body = "请不要重复添加标签"
     }
+  };
+
+  // 根据文件名字获取文件信息
+  async getFileInfo(ctx, next) {
+    const { filename } = ctx.params
+    const fileInfo = await fileService.getFileInfoByFilename(filename)
+
+    ctx.response.set('content-type', fileInfo.mimetype)
+    ctx.body = fs.createReadStream(`${PICTURE_PATH}/${filename}`)
+
   }
 }
 

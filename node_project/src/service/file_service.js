@@ -22,6 +22,14 @@ class FileService {
     const [result] = await connection.execute(statement, [ filename, mimetype, size, userId, momentId ])
 
     return result
+  };
+
+  // 根据filename获取文件信息
+  async getFileInfoByFilename(filename) {
+    const statement = `SELECT * FROM moment_picture WHERE filename = ?;`
+    const [result] = await connection.execute(statement, [ filename ])
+
+    return result
   }
 }
 
