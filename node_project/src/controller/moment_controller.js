@@ -67,8 +67,13 @@ class MomentController {
 
   // 根据文件名字获取文件信息
   async getFileInfo(ctx, next) {
-    const { filename } = ctx.params
-    const fileInfo = await fileService.getFileInfoByFilename(filename)
+    let { filename } = ctx.params;
+    const fileInfo = await fileService.getFileInfoByFilename(filename);
+    const { type } = ctx.query;
+    const types = ['large', 'middle', 'small'];
+    if(types.some(item => item === type)) {
+      filename = filename + '-' + type
+    };
 
     ctx.response.set('content-type', fileInfo.mimetype)
     ctx.body = fs.createReadStream(`${PICTURE_PATH}/${filename}`)
